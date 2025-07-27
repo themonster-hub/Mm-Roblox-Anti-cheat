@@ -8,7 +8,7 @@
 
 MM Anti-Cheat is a comprehensive, server-authoritative anti-cheat system for Roblox, featuring advanced behavior validation, network security, and physics monitoring. It is engineered on the principle of zero client trust, effectively detecting and preventing a wide range of exploits by validating all player actions against server-side expectations.
 
-**Developer:** Your Name / Studio  
+**Developer:** tyhyjuu1
 **Version:** 1.0  
 **License:** Proprietary Software – Unauthorized modification, distribution, or use is strictly prohibited.
 
