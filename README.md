@@ -1,198 +1,236 @@
 
-##MM Anti-Cheat
 
-![alt text](https://img.shields.io/badge/Type-Server--Side-blue)
+MM Anti-Cheat v1.0
 
-
-![alt text](https://img.shields.io/badge/Architecture-Modular-green)
+![alt text](https://img.shields.io/github/v/tag/author/repo?label=version&color=blue)
 
 
-![alt text](https://img.shields.io/badge/Compatibility-FilteringEnabled-brightgreen)
+![alt text](https://img.shields.io/badge/License-Proprietary-red)
 
-A comprehensive, server-authoritative anti-cheat solution designed for Roblox. This system is engineered on the principle of zero client trust, with all critical detection logic operating on the server to ensure high resistance to tampering and full compliance with the FilteringEnabled environment.
 
-Table of Contents
+![alt text](https://img.shields.io/badge/Status-Active-brightgreen)
 
-Why MM Anti-Cheat?
+Overview
 
-Feature Set
+MM Anti-Cheat is a comprehensive, server-authoritative anti-cheat system for Roblox, featuring advanced behavior validation, network security, and physics monitoring. It is engineered on the principle of zero client trust, effectively detecting and preventing a wide range of exploits by validating all player actions against server-side expectations.
+
+Developer: Your Name / Studio
+
+Version: 1.0
+
+License: Proprietary Software - Unauthorized modification, distribution, or use is strictly prohibited.
+
+Features
+Core Features
+
+Server-Authoritative Architecture: All critical logic runs on the server, making client-side bypasses exceptionally difficult.
+
+Modular Detection: Detections can be individually enabled, disabled, and configured.
+
+Violation & Escalation System: Accumulates violation points for suspicious behavior, leading to escalating punishments.
+
+Secure Remote Handling: Built-in wrappers for remotes that automatically prevent spam and abuse.
+
+Weakness Scanner: Audits the game for common security vulnerabilities and provides developer feedback.
+
+Configuration-Driven: All thresholds and settings are managed in a single, easy-to-use configuration file.
+
+Developer API: Simple functions to authorize legitimate game mechanics and prevent false positives.
+
+Security & Detection Features
+
+Speed Hack Detection: Monitors and validates player velocity.
+
+Noclip & Phasing Detection: Uses raycasting to prevent players from passing through solid objects.
+
+Teleport Detection: Flags and reverts impossibly large movements.
+
+Infinite Jump & High Jump Detection: Validates jump frequency and vertical velocity.
+
+Flight Detection: Inferred through a combination of noclip, high jump, and speed detection.
+
+God Mode & Health Manipulation: Prevents unauthorized health increases.
+
+MaxHealth Manipulation: Reverts unauthorized changes to a player's maximum health.
+
+Stat Tampering: Protects leaderstats values from being modified by the client.
+
+Tool Spoofing & Unauthorized Equipping: Detects tools that are not legitimately owned by the player.
+
+GUI Injection Detection: Securely scans the client's CoreGui for unauthorized interfaces.
+
+Executor Detection: Checks for global variables and metatable hooks common to exploit injectors.
 
 Installation
+Prerequisites
 
-System Architecture
+Roblox Studio
 
-Configuration
+Administrative access to your Roblox game
 
-API & Integration
+Setup Steps
 
-Weakness Scanner
+Import all files into your Roblox game, following the structure below.
 
-License
+Place server modules (MM_AntiCheat, MM_Config, MM_Remotes) and the loader script in ServerScriptService.
 
-Disclaimer
+Place the client handler script (MM_ClientHandler) in StarterPlayerScripts.
 
-Why MM Anti-Cheat?
+Update MM_Config.lua with your preferences (e.g., Whitelist, ViolationLevels).
 
-Server-Authoritative: The core design principle is to never trust the client. All detections are validated on the server, making exploits that manipulate client-side physics or properties ineffective.
+Use the Developer API (see below) in your game scripts to authorize legitimate actions.
 
-Modular & Extensible: Detections are separated into modules that can be individually configured or disabled. The API allows for seamless integration with your existing game mechanics.
+Test the system thoroughly in a private server before public deployment.
 
-Developer-Friendly: Includes a built-in Weakness Scanner that automatically audits your game for common security vulnerabilities, providing actionable feedback to improve your overall security posture.
-
-Secure by Default: The remote communication layer is built with security in mind, automatically handling spam/throttling and using nonce-based validation for client-side integrity checks to prevent spoofing.
-
-Feature Set
-Category	Detections & Features
-Movement & Physics	<ul><li>Monitors and normalizes player velocity to prevent speed exploits.</li><li>Detects and reverts unauthorized positional changes (teleporting).</li><li>Performs raycast checks to prevent noclip/phasing through collidable geometry.</li><li>Flags excessive vertical velocity (high jumps) and jump frequency (infinite jumps).</li></ul>
-Character & Stats	<ul><li>Prevents unauthorized modification of Humanoid.Health and Humanoid.MaxHealth.</li><li>Protects leaderstats values from client-side manipulation.</li><li>Reverts unauthorized changes to core properties like WalkSpeed and JumpPower.</li><li>Detects spoofed tools, duplicate character parts, and excessive accessory spam.</li></ul>
-Network & Remotes	<ul><li>Provides wrapped RemoteEvent and RemoteFunction constructors with built-in spam and throttle protection.</li><li>Monitors ClickDetector interaction rates to detect auto-clickers.</li><li>Includes detection for rapid-fire chat spam.</li></ul>
-Client-Side Integrity	<ul><li>Performs secure, nonce-based checks of the client's CoreGui for injected GUIs.</li><li>Scans the client's global environment (_G) and metatables for signs of exploit injectors.</li><li>Times out and flags clients that fail to respond to integrity checks.</li></ul>
-Installation
-1. File Structure
-
-Place the system's four scripts into your game environment as follows.
-
-Note: The SecureRemotes folder will be generated automatically in ReplicatedStorage on first run.
-
+File Structure
 Generated code
 game
-└── ServerScriptService
+└── ServerScriptService/
 │   ├── MM_AntiCheat.lua       (ModuleScript)
 │   ├── MM_Config.lua          (ModuleScript)
 │   ├── MM_Remotes.lua         (ModuleScript)
 │   └── AntiCheat_Loader.lua   (Script)
 │
-└── StarterPlayer
-    └── StarterPlayerScripts
+└── StarterPlayer/
+    └── StarterPlayerScripts/
         └── MM_ClientHandler.lua (LocalScript)
-
-2. Create the Loader Script
-
-Create a new Script in ServerScriptService named AntiCheat_Loader.lua. This script boots the system.
-
-Generated lua
--- /ServerScriptService/AntiCheat_Loader.lua
-
-local ServerScriptService = game:GetService("ServerScriptService")
-
-local AntiCheat = require(ServerScriptService.MM_AntiCheat)
-local Config = require(ServerScriptService.MM_Config)
-
--- Initialize the system with your configuration
-AntiCheat.Init(Config)
-IGNORE_WHEN_COPYING_START
-content_copy
-download
-Use code with caution.
-Lua
-IGNORE_WHEN_COPYING_END
-3. Create the Client Handler
-
-Create a new LocalScript in StarterPlayerScripts named MM_ClientHandler.lua and paste in the client-side code provided with the system files. This script is lightweight and only responds to integrity check requests from the server.
-
-System Architecture
-
-MM_AntiCheat.lua (Core Detection Engine): The central module that runs the main RunService.Heartbeat detection loop. It tracks player state, manages violation data, and executes configured penalties.
-
-MM_Config.lua (Configuration Module): A centralized table of all settings. This file is used to enable/disable detections, tune thresholds, whitelist UserIDs, and define violation responses. This is the primary file for customization.
-
-MM_Remotes.lua (Network Security Layer): Manages secure client-server communication. It provides wrapped RemoteEvent and RemoteFunction constructors and manages the nonce-based system for client-side integrity checks.
-
-MM_ClientHandler.lua (Client-Side Integrity Handler): A minimal LocalScript that responds to server requests for environment checks (e.g., CoreGui scans). It operates on a request-response model and has no authority of its own.
 
 Configuration
 
-All system behavior is controlled via MM_Config.lua.
+All settings are managed in MM_Config.lua.
 
-Whitelist: An array of UserIds to be ignored by all cheat detections.
-
-ViolationLevels: A dictionary mapping violation point thresholds to actions ("KICK" or a custom function for banning).
-
-Callbacks.OnFlag: A function that fires whenever a player is flagged. Ideal for integrating with external logging services or analytics.
-
-API & Integration
-
-To prevent false positives from your own game mechanics, you must inform the anti-cheat of legitimate, server-driven state changes.
-
-Best Practices
-
-Authorize Before You Act: Always call the authorization function before your code makes the actual change.
-
-Update Baselines for Temporary Effects: When applying a temporary power-up (like a speed boost), use UpdateExpectedValue. When it expires, call it again to revert the expectation to the default value.
-
-Authorizing Stat Changes
-
-Function Signature:
-AntiCheat.AuthorizeStatChange(player: Player, statName: string, newValue: any)
-
-Example (Shop Script):
-
+Basic Configuration
 Generated lua
-local AntiCheat = require(game.ServerScriptService.MM_AntiCheat)
+-- In MM_Config.lua
+Config.Whitelist = { [1] = true } -- Whitelist admin/developer UserIDs
 
-function purchaseItem(player, itemCost)
-    local stats = player.leaderstats
-    if stats.Cash.Value >= itemCost then
-        local newCashValue = stats.Cash.Value - itemCost
-        
-        -- 1. Authorize the new value before the server makes the change.
-        AntiCheat.AuthorizeStatChange(player, "Cash", newCashValue)
-        
-        -- 2. Apply the change.
-        stats.Cash.Value = newCashValue
-    end
-end
+-- Defines punishments based on accumulated violation points.
+Config.ViolationLevels = {
+	[50] = "KICK",
+	[100] = function(player, reason)
+		-- Custom ban logic here (e.g., DataStore, Trello, etc.)
+		print("Banning "..player.Name.." for: "..reason)
+	end,
+}
 IGNORE_WHEN_COPYING_START
 content_copy
 download
 Use code with caution.
 Lua
 IGNORE_WHEN_COPYING_END
-Updating Expected Properties
-
-Function Signature:
-AntiCheat.UpdateExpectedValue(player: Player, propertyName: string, newValue: any)
-
-Example (Speed Boost Power-up):
-
+Callback Configuration
 Generated lua
-local AntiCheat = require(game.ServerScriptService.MM_AntiCheat)
-
-function applySpeedBoost(character)
-    local humanoid = character:FindFirstChildOfClass("Humanoid")
-    if not humanoid then return end
-    
-    local player = game.Players:GetPlayerFromCharacter(character)
-    if not player then return end
-
-    -- 1. Update the expected value for the anti-cheat.
-    AntiCheat.UpdateExpectedValue(player, "WalkSpeed", 50)
-    
-    -- 2. Apply the change.
-    humanoid.WalkSpeed = 50
-end
+-- Custom logging, analytics, or Discord integration can be hooked here.
+Config.Callbacks = {
+	OnFlag = function(player, reason, points, totalViolations)
+		-- Send a Discord webhook, log to a database, etc.
+	end,
+	OnKick = function(player, reason)
+		-- Final data saving before a player is removed.
+	end,
+}
 IGNORE_WHEN_COPYING_START
 content_copy
 download
 Use code with caution.
 Lua
 IGNORE_WHEN_COPYING_END
-Weakness Scanner
+Core Modules & API Documentation
+MM_AntiCheat (API)
 
-The system includes a utility that runs on server startup to scan for common security flaws in your game's structure, such as:
+The primary interface for your game scripts to communicate with the anti-cheat system.
 
-Unprotected RemoteEvent or RemoteFunction instances in ReplicatedStorage.
+AntiCheat.AuthorizeStatChange(player, statName, newValue)
 
-Potentially sensitive ModuleScripts in client-accessible locations.
+Authorizes a one-time change to a protected leaderstat value. Must be called before the change occurs.
 
-Server Scripts located in StarterPlayerScripts.
+AntiCheat.UpdateExpectedValue(player, propertyName, newValue)
 
-This feature provides actionable warnings in the server console to help developers harden their game's security posture.
+Updates the anti-cheat's baseline expectation for a Humanoid property (e.g., WalkSpeed, MaxHealth). Use this for power-ups or temporary effects.
+
+MM_Remotes (API)
+
+Provides secure constructors for network communication.
+
+Remotes.WrapRemoteEvent(name)
+
+Returns a secure RemoteEvent wrapper that automatically handles spam detection.
+
+Remotes.WrapRemoteFunction(name)
+
+Returns a secure RemoteFunction wrapper.
+
+Remotes.SecureClickDetector(clickDetector)
+
+Adds auto-clicker detection to an existing ClickDetector.
+
+Security Settings & Thresholds
+
+These values are configured within the specific detection tables in MM_Config.lua.
+
+Movement Thresholds
+Generated lua
+Config.Speed.Buffer = 5                 -- Allowed speed variance above WalkSpeed.
+Config.Teleport.MaxDistance = 100       -- Max distance a player can travel in a single physics step.
+Config.InfiniteJump.TimeThreshold = 0.2 -- Minimum time between jumps.
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Lua
+IGNORE_WHEN_COPYING_END
+Network Thresholds
+Generated lua
+Config.Remotes.EventSpam.MaxRequests = 10 -- Max remote fires per...
+Config.Remotes.EventSpam.TimeFrame = 1    -- ...second.
+
+Config.AutoClicker.MaxClicks = 15         -- Max clicks per...
+Config.AutoClicker.TimeFrame = 1          -- ...second on a single detector.
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Lua
+IGNORE_WHEN_COPYING_END
+Punishment System
+
+The punishment system is driven by ViolationLevels in the configuration file.
+
+Violation Points
+
+Each detected offense adds a specific number of ViolationPoints to the player's profile.
+
+The severity of the offense determines the points assigned (e.g., Remote Spam: 5 points, Executor Detection: 100 points).
+
+Escalation
+
+When a player's total violation points cross a threshold defined in ViolationLevels, the corresponding action is triggered.
+
+Actions can be a predefined string ("KICK") or a custom function for full control over banning.
+
+Generated lua
+-- Example: A player with 48 points who gets flagged for Remote Spam (+5 points)
+-- will have 53 total points, crossing the 50-point threshold and triggering a kick.
+Config.ViolationLevels = {
+	[50] = "KICK",
+	[100] = -- Ban function
+}
+IGNORE_WHEN_COPYING_START
+content_copy
+download
+Use code with caution.
+Lua
+IGNORE_WHEN_COPYING_END
+Support and Contact
+
+For support or inquiries regarding MM Anti-Cheat, please contact the developer.
+
+Developer: Your Name / Studio
+
+Version: 1.0
+
+Last Updated: 2024-05-21
 
 License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
-
-Disclaimer
-
-This system provides a robust defense against a wide array of common exploits. However, no anti-cheat solution is infallible. It should be used as one layer in a comprehensive security strategy that includes diligent server-side validation and secure coding practices.
+This anti-cheat system is proprietary software. All files and code are the intellectual property of the developer. Any unauthorized modification, reproduction, distribution, or use of this system, in whole or in part, is strictly prohibited and may result in legal action and a permanent ban from associated games.
