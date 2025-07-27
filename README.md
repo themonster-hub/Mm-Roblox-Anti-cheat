@@ -1,5 +1,5 @@
 
-##MM Anti-Cheat System
+#MM Anti-Cheat System
 
 MM Anti-Cheat is a modular, server-authoritative, and reusable anti-cheat solution designed for Roblox games. Its core philosophy is to never trust the client. All critical detection logic runs on the server, making it compliant with FilteringEnabled and resistant to client-side tampering.
 
