@@ -193,9 +193,9 @@ Config.ViolationLevels = {
 
 For issues or questions:
 
-**Developer:** Your Name / Studio  
+**Developer:** Nobody knows... 
 **Version:** 1.0  
-**Last Updated:** 2024-05-21
+**Last Updated:** 7-12-25
 
 ---
 
